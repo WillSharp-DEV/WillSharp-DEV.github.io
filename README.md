@@ -1,3 +1,2 @@
 # WillSharp-DEV.github.io
-A very simple website introducing myself.
-This website maybe or may not cover projects I have worked on. Sometimes I dont care enough to show others what ive been doing.
+This is simplt a website for others to see who I am and what I have done before.
