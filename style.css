@@ -1,0 +1,24 @@
+.content-container {
+    padding-left: 15%;
+    padding-right: 15%;
+    margin-bottom: 40px;
+}
+
+.headerbutton {
+    padding-left: 5%;
+    font-size: large;
+    text-decoration: none;
+    color: blue;
+    font-weight: bold;
+}
+
+img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+}

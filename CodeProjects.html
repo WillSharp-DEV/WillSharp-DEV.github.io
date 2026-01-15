@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>William Sharp's Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header style="text-align: center; background-color: gainsboro; padding: 10px;">
+        <a class="headerbutton" href="index.html">Home</a> &nbsp;
+        <a class="headerbutton" href="Photography.html">Photography</a> &nbsp;
+        <a class="headerbutton" href="CodeProjects.html">Coding Projects</a>
+    </header>
+
+    <div class="content-container">
+        <h1>Matrix Based Physics Simulation</h1>
+        <p>
+            This project of mine produced realistic physics simulations by calculating matrices, items, and their distances
+            to the center cell (the cell which shot the projectile). It then used algebraic transformations and
+            trigonometric functions to simulate the motion of the beam/object. Here are some examples of the simulations:
+        </p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <img src="Media/MReflect.gif" alt="Simulated beam of light bouncing off wall" style="width: 100%; height: auto;">
+                <p>This is an animation of a beam of simulated light being reflected off an almost completely reflective surface.</p>
+            </div>
+            <div>
+                <img src="Media/MCurved.gif" alt="Simulated beam being curved by force" style="width: 100%; height: auto;">
+                <p>For this simulation, I developed a way for beams to be curved by a force. This isn't one specific beam of anything though; it's simply a generic beam.</p>
+            </div>
+            <div>
+                <img src="Media/MSuck.gif" alt="Simulated expanding object being sucked by other object" style="width: 100%; height: auto;">
+                <p>This is, once again, a demonstration of forces interacting with simulated objects.</p>
+            </div>
+            <div>
+                <img src="Media/MGas.png" alt="Probability cloud of N2 Gas demonstration" style="width: 100%; height: auto;">
+                <p>
+                    This is a demonstration of the visualization of my simulation. It shows a single nitrogen gas
+                    electron probability cloud. Keep in mind this is only a 2D slice and neglects to reveal the
+                    second pi bond found in N2 gas.
+                </p>
+            </div>
+        </div>
+
+        <h1>Gamma Scintillation macOS Aid</h1>
+        <p>
+            I had gotten frustrated that my scintillation probe didn't have a native application on macOS... So I made
+            one! It used Gaussian filters and extensive mathematical calculations to help aid in the detection of certain types of radioactive elements. 
+            It was limited, though, and still required an external program for deeper analysis.
+            <br><br>
+            Here are some snapshots of it in use:
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div><img src="Media/RMGraph.png" alt="Graph output of scintillation data" style="width: 100%; height: auto;"></div>
+            <div><img src="Media/RMInitial.png" alt="Initial startup screen of the app" style="width: 100%; height: auto;"></div>
+            <div><img src="Media/RMPort.png" alt="Port selection settings" style="width: 100%; height: auto;"></div>
+            <div><img src="Media/RMAbout.png" alt="About screen of the application" style="width: 100%; height: auto;"></div>
+        </div>
+    </div>
+</body>
+</html>
