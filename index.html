@@ -1,136 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>William Sharp's Page</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <title>William Sharp - About Me</title>
+    <style>
+        /* Base Apple UI Aesthetics & Reset */
+        :root {
+            --bg-color: #000000;
+            --card-bg: #1c1c1e;
+            --card-hover: #2c2c2e;
+            --card-elevated: #3a3a3c;
+            --text-main: #ffffff;
+            --text-secondary: #ebebf599;
+            --accent: #0a84ff;
+            --transition-spring: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            padding: 100px 40px 60px; /* Added top padding to account for fixed header */
+        }
+
+        /* --- Header & Navigation --- */
+        header {
+            position: fixed;
+            top: 30px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 50;
+        }
+
+        .headerbutton {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            background: rgba(28, 28, 30, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: background 0.2s;
+        }
+
+        .headerbutton:hover {
+            background: rgba(44, 44, 46, 0.8);
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Content Layout --- */
+        .content-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .section-card {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Stagger animations for each card */
+        .section-card:nth-child(1) { animation-delay: 0.1s; }
+        .section-card:nth-child(2) { animation-delay: 0.2s; }
+        .section-card:nth-child(3) { animation-delay: 0.3s; }
+        .section-card:nth-child(4) { animation-delay: 0.4s; }
+        .section-card:nth-child(5) { animation-delay: 0.5s; }
+
+        /* --- Typography --- */
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        ul, ol {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body>
-    <header style="text-align: center; background-color: gainsboro; padding: 10px;">
-        <a class="headerbutton" href="index.html">Home</a> &nbsp;
-        <a class="headerbutton" href="Photography.html">Photography</a> &nbsp;
+    <header>
+        <a class="headerbutton" href="index.html">Home</a>
+        <a class="headerbutton" href="Photography.html">Photography</a>
         <a class="headerbutton" href="CodeProjects.html">Coding Projects</a>
     </header>
-    <div style="text-align: center;">
-        <h1><u>Home</u></h1>
-    </div>
+
     <div class="content-container">
-        <h1>About me</h1>
-        <p>
-            Hello! My name is William Sharp! I am currently in my second year at <a
-                href="https://flc.losrios.edu">Folsom Lake College</a>. I am studying
-            Physics, hoping to focus on nuclear physics or quantum mechanics related research. My favorite pastimes
-            include:
-        </p>
-        <ol>
-            <li>Playing guitar</li>
-            <li>Coding</li>
-            <li>Astrophotography</li>
-            <li>Photography</li>
-        </ol>
-        <p>
-            Each of these hobbies allows me to express my emotions and test my weaknesses and
-            strengths as a critical thinker. I don't do these things to look impressive; they are simply things I find
-            extremely enjoyable.
-            Sure, they <i>can</i> impress others, but that isn't my goal.
-        </p>
+        
+        <div class="section-card">
+            <h1>About me</h1>
+            <p>Hello! My name is William Sharp, I am a second year Physics student at <a href="https://flc.losrios.edu">Folsom Lake College</a>. I love photography and science; in my mind, they got together like how a handshake meets one hand with the other. Some of my favorite pass times include:</p>
+            <ol>
+                <li>Playing guitar</li>
+                <li>Coding</li>
+                <li>Astrophotography</li>
+                <li>Photography</li>
+            </ol>
+            <p>Each of these keep me entertained in their own ways, but what I enjoy about each is that they are never tiring! I can further my understanding in each if it werent for time constraints!</p>
+        </div>
 
-        <h1>Project History</h1>
-        <p>
-            At the age of 18, I made a macOS app that aided in the detection of radioactive isotopes using external
-            scintillation probe sensors. THIS is the project that got me into quantum mechanics. I learned about quarks,
-            the quantum phasing of alpha
-            particles, the emission of gamma particles, and even the transformation of up and down quarks in beta decay
-            reactions.
-            This can be viewed on the <a href="CodeProjects.html">Coding Projects Page</a>.
-        </p>
-        <p>
-            After that, I made another Python project which visualized the simulation of beams and electron
-            probability clouds. It's a little primitive, but it gets the job done. This project can also be viewed on
-            the <a href="CodeProjects.html">Coding Projects
-                Page</a>. This project was extremely math-intensive as I used matrices, vectors, and algebraic functions
-            to calculate the trajectory of everything.
-        </p>
+        <div class="section-card">
+            <h1>Project History</h1>
+            <p>I am a "fixer". I really prefer fixing a situation myself than having someone else do it for me. For example, when I was into gamma spectroscopy I had an issue where I couldnt use the tools given on my Macbook. Instead of switching devices I instead coded my own application which bridged the communication from probe to laptop.</p>
+            <p>Another example is videogames! Sometimes I like to draw connections between my statistical analysis to the videogame I am playing. One time I used proportionalinearization between multiple variables to find a formula (I derived myself) which allowed me to predict certain videogame stats.</p>
+        </div>
 
+        <div class="section-card">
+            <h1>My Analytical Approach</h1>
+            <p>Although I love enterperating data, it really sets the stage for analysis of anything I am looking into. deriving formulas is a way I can express how I see the world.</p>
+            <p>These sets of skills of mines have saved me from a few chemistry and physics labs. If I had to teach someone a specific topic it would most certainly be data linearization.</p>
+            
+            <h3>Skill Highlight: Data Linearization</h3>
+            <p>Here is how I approach a problem:</p>
+            <ul>
+                <li>Isolating input and output variables from data sets.</li>
+                <li>Charting data points and performing logarithmic operations to identify exponential relationships.</li>
+                <li><strong>Practical Application:</strong> I have used these specific sets of skills in videogames, I have used these sets of skills to create biological dosage (micro sieverts per hour) formulas to keep myself safe while doing gamma spectroscopy, and more!</li>
+            </ul>
+        </div>
 
+        <div class="section-card">
+            <h1>Coding</h1>
+            <p>Programming is such an amazing skillset to have, itd be the next thing I would want to teach the world! I have written projects like physics simulations, I have coded mini videogames, and have developed personal apps to help me in specific tasks! Below are some of the languages I have coded in; they are ranked in order of use.</p>
+            <ol>
+                <li>Python</li>
+                <li>Swift, Swift UI</li>
+                <li>LaTeX</li>
+                <li>C++</li>
+                <li>Javascript</li>
+                <li>Java (very minor experience)</li>
+                <li>Lua</li>
+            </ol>
+            <p>You may also check out my <a href="CodeProjects.html">Projects Page</a> to see some of the tings Ive worked on!</p>
+        </div>
 
-        <h1>My Analytical Approach</h1>
-        <p>
-            I have always been driven by an intense curiosity that pushes me to explore topics well beyond the standard
-            curriculum.
-            I view mathematics not just as a school subject, but as a lens through which to view the world.
-            For instance, while taking basic Algebra, I began self-studying Calculus concepts. During Trigonometry, I
-            was already
-            applying those principles to my independent studies on mechanical waves.
-        </p>
-        <p>
-            This proactive approach has allowed me to develop a unique intuition for data analysis. I frequently apply
-            mathematical modeling to diverse scenarios, ranging from video game economies to nuclear physics.
-        </p>
-        <h3>Skill Highlight: Data Linearization & Modeling</h3>
-        <p>
-            I have developed a strong proficiency in turning raw data into functional formulas. My process includes:
-        </p>
-        <ul>
-            <li>Isolating input and output variables from complex data sets.</li>
-            <li>Charting data points and performing logarithmic operations to identify exponential relationships.</li>
-            <li><strong>Physics Application (Dosimetry):</strong> I derived a multivariable function to predict
-                radiation dosage (in &mu;Sv/h) for Cesium-137 and Cobalt-60 sources.
-                By accounting for the Inverse Square Law (distance) and exponential attenuation (shielding material
-                thickness), I created a reliable model for estimating safe exposure limits.
-            </li>
-            <li><strong>Economy Optimization:</strong> I also apply this to game theory, recently developing a formula
-                to optimize efficiency in a game economy.
-                By integrating the "items per hour" function, I successfully predicted yield over time with high
-                accuracy.
-            </li>
-        </ul>
+        <div class="section-card">
+            <h1>Photography & Astrophotography</h1>
+            <p>Unlike my analytical approach to life, I also find myself experiencing the world through a qualatative lens (literally). My dear camera allows me to beutifully capture something we can all understand; not the math world, but our optical world.</p>
+            <p>Following my photography hobby I briefly undertook a focus on astrophotography! Due to limited technology I only have one successful photo. Go and check it out in my <a href="Photography.html">Photography Page</a>!</p>
+        </div>
 
-
-
-        <h1>Coding</h1>
-        <p>
-            This is the coolest part about myself. I can successfully turn my mathematics and skills into a machine
-            (even
-            possibly an extension of myself) just by writing some code. I mostly use Python due to its versatility and
-            access to a large list of libraries and documentation,
-            but I am familiar with a lot of other coding languages. Here are some:
-        </p>
-        <ol>
-            <li>Python</li>
-            <li>Swift</li>
-            <li>Swift UI</li>
-            <li>Javascript</li>
-            <li>Java (very minor experience)</li>
-            <li>LaTeX</li>
-            <li>Lua</li>
-        </ol>
-        <p>
-            Head to the <a href="CodeProjects.html">Coding Projects Page</a> to see a summary of my recent projects.
-            My obsession with coding started when I was around 13 when I was introduced to Lua. I quickly realized I
-            could
-            get more out of my work with higher-power languages like Python.
-        </p>
-
-        <h1>Photography & Astrophotography</h1>
-        <p>
-            When I am out in the wilderness I find myself wanting to "save" the moment. There is just something
-            about being able to capture something as fast as a flying bird, or as slow as a creek rolling downstream.
-            Although I mostly do
-            wildlife photography, I find myself capturing landscapes I find amusing. Head to my <a
-                href="Photography.html">Photography page</a> to see some of
-            my recent photographs.
-        </p>
-        <p>
-            This interest in "capturing the moment" reaches even into my science studies. In fact, I was able to capture
-            a photo of the M31 galaxy (my proudest work so far). Since then my luck has run dry and the weather hasn't
-            cleared up when I wanted it to.
-            The M31 photo will also be on my <a href="Photography.html">Photography page</a>.
-        </p>
     </div>
 </body>
-
 </html>

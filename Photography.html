@@ -1,48 +1,524 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>William Sharp's Page</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-</head>
+    <title>William Sharp - Photography</title>
+    <style>
+        /* Base Apple UI Aesthetics & Reset */
+        :root {
+            --bg-color: #000000;
+            --card-bg: #1c1c1e;
+            --card-hover: #2c2c2e;
+            --card-elevated: #3a3a3c;
+            --text-main: #ffffff;
+            --text-secondary: #ebebf599;
+            --accent: #0a84ff;
+            --transition-spring: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            padding: 100px 40px 60px; /* Updated padding for the new fixed header */
+        }
+
+        /* --- Header & Navigation (Matching the rest of the site) --- */
+        header {
+            position: fixed;
+            top: 30px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 50;
+        }
+
+        .headerbutton {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            background: rgba(28, 28, 30, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: background 0.2s;
+        }
+
+        .headerbutton:hover {
+            background: rgba(44, 44, 46, 0.8);
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* --- Album View --- */
+        .albums-container {
+            display: flex; flex-direction: column; gap: 40px;
+            max-width: 1000px; margin: 0 auto;
+        }
+
+        .album-card {
+            display: flex; align-items: center; gap: 30px;
+            cursor: pointer; opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .album-image-wrapper {
+            position: relative; width: 400px; height: 250px;
+            border-radius: 20px; overflow: hidden;
+            transition: transform var(--transition-spring), box-shadow var(--transition-spring);
+            flex-shrink: 0;
+        }
+        .album-image { width: 100%; height: 100%; object-fit: cover; transition: transform var(--transition-spring); }
+        
+        .album-image-wrapper:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1); }
+        .album-image-wrapper:hover .album-image { transform: scale(1.05); }
+
+        .hover-button {
+            position: absolute; top: 20px; right: 20px;
+            width: 44px; height: 44px;
+            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            opacity: 0; transform: scale(0.8); transition: all var(--transition-spring); pointer-events: none;
+        }
+        .hover-button svg { fill: white; width: 20px; height: 20px; }
+        .album-image-wrapper:hover .hover-button { opacity: 1; transform: scale(1); }
+
+        .album-info { background-color: var(--card-bg); padding: 30px; border-radius: 20px; flex: 1; }
+        .album-info h2 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+        .album-info p { color: var(--text-secondary); font-size: 16px; line-height: 1.5; margin-bottom: 15px; }
+        .album-gear-summary { font-size: 13px; color: var(--text-secondary); padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); line-height: 1.4; }
+        .album-gear-summary span { color: var(--text-main); font-weight: 500; }
+
+        /* --- Album Detail Modal --- */
+        .album-modal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            z-index: 100; display: none; overflow-y: auto; padding: 100px 20px 60px;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .album-modal.active { display: block; opacity: 1; }
+        .close-btn {
+            position: fixed; top: 30px; left: 40px;
+            background: rgba(28, 28, 30, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: none; color: white; width: 40px; height: 40px; border-radius: 50%;
+            font-size: 20px; cursor: pointer; z-index: 300; transition: background 0.2s;
+        }
+        .close-btn:hover { background: var(--card-hover); }
+
+        .photo-list { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+
+        /* --- Individual Photo List Item --- */
+        .photo-item {
+            display: grid; grid-template-columns: 200px 1fr; grid-template-rows: auto auto 1fr auto;
+            gap: 10px 25px; background-color: var(--card-bg); padding: 20px; border-radius: 16px;
+            cursor: pointer; transition: all var(--transition-spring);
+        }
+        .photo-item:hover { background-color: var(--card-hover); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .photo-preview { grid-column: 1 / 2; grid-row: 1 / 5; width: 100%; height: 100%; min-height: 160px; object-fit: cover; border-radius: 12px; }
+        .photo-title { grid-column: 2 / 3; font-size: 20px; font-weight: 600; align-self: end; }
+        .photo-desc { grid-column: 2 / 3; color: var(--text-secondary); font-size: 15px; line-height: 1.4; }
+        
+        /* Badges for List View */
+        .item-tags { grid-column: 2 / 3; display: flex; gap: 8px; flex-wrap: wrap; margin-top: 5px; align-self: start; }
+        .tag-badge { background: #3a3a3c; color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 10px; font-weight: 500; letter-spacing: 0.3px; display: inline-flex; align-items: center; justify-content: center; }
+        .tag-location { background: rgba(10, 132, 255, 0.2); color: #5eacff; }
+        .tag-bio { background: rgba(48, 209, 88, 0.2); color: #6be384; }
+        .tag-space { background: rgba(191, 90, 242, 0.2); color: #da8fff; } /* New space tag color */
+
+        .photo-meta { grid-column: 2 / 3; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--text-secondary); align-self: end; padding-top: 10px;}
+        .photo-author { color: var(--text-main); font-weight: 500; margin-right: 5px; }
+
+        /* --- Fullscreen Split-Layout Modal --- */
+        .fullscreen-modal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: #000; z-index: 200; display: none; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .fullscreen-modal.active { display: flex; opacity: 1; }
+
+        .fs-layout { display: flex; width: 100%; height: 100%; }
+        
+        /* Left Side: Image */
+        .fs-image-area { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; position: relative; }
+        .fs-image-area img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
+
+        /* Right Side: Sidebar */
+        .fs-sidebar {
+            width: 400px; height: 100%; background: rgba(28, 28, 30, 0.85);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-left: 1px solid rgba(255,255,255,0.1);
+            padding: 40px 30px; overflow-y: auto; flex-shrink: 0;
+            display: flex; flex-direction: column; gap: 25px;
+        }
+
+        /* Sidebar content typography */
+        .fs-title { font-size: 28px; font-weight: 600; }
+        .fs-desc { color: var(--text-secondary); line-height: 1.5; font-size: 16px; }
+        
+        .fs-section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); font-weight: 600; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+        
+        .fs-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; }
+        .meta-label { color: var(--text-secondary); font-size: 12px; margin-bottom: 2px; }
+        .meta-value { color: var(--text-main); font-weight: 500; }
+
+        /* Wikipedia Knowledge Cards */
+        .wiki-container { display: flex; flex-direction: column; gap: 15px; }
+        .wiki-card {
+            background: var(--card-hover); border-radius: 16px; padding: 15px;
+            display: flex; flex-direction: column; gap: 10px;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        .wiki-title { font-weight: 600; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .wiki-badge { font-size: 10px; text-transform: uppercase; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; color: var(--text-secondary); }
+        .wiki-extract { font-size: 13px; color: var(--text-secondary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        .wiki-link {
+            font-size: 12px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 5px;
+            transition: opacity 0.2s;
+        }
+        .wiki-link:hover { opacity: 0.8; }
+
+        .view-original-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            background: var(--accent); color: white; text-decoration: none;
+            padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 15px;
+            margin-top: 10px; transition: opacity 0.2s; text-align: center;
+        }
+        .view-original-btn:hover { opacity: 0.8; }
+    </style>
+</head>
 <body>
-    <header style="text-align: center; background-color: gainsboro; padding: 10px;">
-        <a class="headerbutton" href="index.html">Home</a> &nbsp;
-        <a class="headerbutton" href="Photography.html">Photography</a> &nbsp;
+
+    <header>
+        <a class="headerbutton" href="index.html">Home</a>
+        <a class="headerbutton" href="Photography.html">Photography</a>
         <a class="headerbutton" href="CodeProjects.html">Coding Projects</a>
     </header>
-    <div style="text-align: center;">
-        <h1><u>Photography</u></h1>
-    </div>
-    
-    <div class="content-container">
-        <h1>Wildlife</h1>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div>
-                <img src="Media/PMacaw.png" alt="Macaw parrot at San Francisco Wildlife Exhibits">
-                <p>Macaw @ San Francisco Wildlife Exhibits.</p>
-            </div>
-            <div>
-                <img src="Media/PSLion.png" alt="Sea Lion in SF port">
-                <p>Sea Lion @ San Francisco Port.</p>
-            </div>
-            <div>
-                <img src="Media/PDuck.png" alt="Duck at Folsom Lake">
-                <p>Duck @ Folsom Lake.</p>
-            </div>
-            <div>
-                <img src="Media/PDuckFlap.png" alt="Duck at Folsom Lake Flapping Wings">
-                <p>Duck @ Folsom Lake Flapping its Wings.</p>
-            </div>
-         </div>
+
+    <div class="albums-container" id="albums-container"></div>
+
+    <div class="album-modal" id="album-modal">
+        <button class="close-btn" onclick="closeAlbum()">✕</button>
+        <div class="photo-list" id="photo-list"></div>
     </div>
 
-    <div class="content-container">
-        <h1>Astrophotography</h1>
-        <img src="Media/PM31.png" alt="Messier 31 Galaxy">
-        <p>Messier 31 and its sibling galaxies. Unfortunately, this is the only astrophotography related photograph I've taken so far.</p>
-    </div> </body>
+    <div class="fullscreen-modal" id="fullscreen-modal">
+        <button class="close-btn" onclick="closeFullscreen()" style="top: 20px; left: 20px;">✕</button>
+        
+        <div class="fs-layout">
+            <div class="fs-image-area">
+                <img src="" alt="" id="fs-image">
+            </div>
+            
+            <div class="fs-sidebar">
+                <div>
+                    <div class="fs-title" id="fs-title"></div>
+                    <div style="color: var(--text-secondary); font-size: 14px; margin-top: 5px;">By <span id="fs-author" style="color: white; font-weight: 500;"></span></div>
+                </div>
+
+                <div class="fs-desc" id="fs-desc"></div>
+
+                <div>
+                    <div class="fs-section-title">Camera Details</div>
+                    <div class="fs-meta-grid" id="fs-meta-grid">
+                        </div>
+                </div>
+
+                <div id="identifications-section" style="display: none;">
+                    <div class="fs-section-title">Identifications</div>
+                    <div class="wiki-container" id="wiki-container">
+                        </div>
+                </div>
+
+                <a href="" target="_blank" class="view-original-btn" id="fs-link">
+                    View Original Image
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                        <polyline points="7 7 17 7 17 17"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const portfolioData = [
+            {
+                id: "album-1",
+                albumTitle: "Macro Photography",
+                albumDesc: "With the introduction of my new lens (the Canon EF 100mm f/2.8L MACRO IS USM), I take a look into the smaller world; a world that functions just below our notice... The macroscopic world!",
+                albumCover: "Media/Photography/Album_One/KillerSpider.png",
+                photos: [
+                    {
+                        url: "Media/Photography/Album_One/KillerSpider.png",
+                        title: "Hunter",
+                        description: "Upon the top of a California poppy, a spider eats the carcass of a unkown species of bug.",
+                        photographer: "William Sharp",
+                        identifications: {
+                            location: "El Dorado, California",
+                            plants: ["Eschscholzia californica"],
+                            insects: ["Oxyopes scalaris"],
+                            animals: [],
+                            space_objects: [] // Added empty array for the new category
+                        },
+                        metadata: {
+                            camera: "Canon 5D Mark IV",
+                            lens: "Canon EF 100mm f/2.8L MACRO IS USM",
+                            aperture: "f/13",
+                            shutter: "1/1000s",
+                            iso: "4000"
+                        }
+                    },
+                    {
+                        url: "Media/Photography/Album_One/SpiderOnWeb.png",
+                        title: "Elegant Huntsmanship",
+                        description: "Spider rests on its web. Somehwhere it can both sunbathe and hunt.",
+                        photographer: "William Sharp",
+                        identifications: {
+                            location: "El Dorado, California",
+                            plants: [],
+                            insects: ["Cyclosa conica"],
+                            animals: [],
+                            space_objects: [] // Added empty array for the new category
+                        },
+                        metadata: {
+                            camera: "Canon 5D Mark IV",
+                            lens: "Canon EF 100mm f/2.8L MACRO IS USM",
+                            aperture: "f/13",
+                            shutter: "1/1000s",
+                            iso: "6400"
+                        }
+                    }
+                ]
+            },
+            {
+                id: "album-2",
+                albumTitle: "Space Photography",
+                albumDesc: "Collection of my astrophotography photos!",
+                albumCover: "Media/Photography/Album_Two/PM31.png",
+                photos: [
+                    {
+                        url: "Media/Photography/Album_Two/PM31.png",
+                        title: "Messier 31 & its sister galaxies.",
+                        description: "A photo of Messier 31 & its sister galaxies.",
+                        photographer: "William Sharp",
+                        identifications: {
+                            location: "El Dorado, California",
+                            space_objects: ["Messier 31","Messier 32", "Messier 110"]
+                        },
+                        metadata: {
+                            camera: "Canon 5D Mark IV",
+                            lens: "SIGMA 170-500mm f/5-6.3 APO",
+                            aperture: "?",
+                            shutter: "?",
+                            iso: "?"
+                        }
+                    }
+                ]
+            }
+        ];
+
+        function initAlbums() {
+            const container = document.getElementById('albums-container');
+            container.innerHTML = ''; 
+            
+            portfolioData.forEach((album, index) => {
+                const uniqueCameras = [...new Set(album.photos.map(p => p.metadata.camera))].join(', ');
+                const uniqueLenses = [...new Set(album.photos.map(p => p.metadata.lens))].join(', ');
+
+                const card = document.createElement('div');
+                card.className = 'album-card';
+                card.onclick = () => openAlbum(index);
+                card.style.animationDelay = `${index * 0.15}s`;
+
+                card.innerHTML = `
+                    <div class="album-image-wrapper">
+                        <img src="${album.albumCover}" class="album-image" alt="${album.albumTitle}">
+                        <div class="hover-button">
+                            <svg viewBox="0 0 24 24"><path d="M5 19L19 5M19 5H10M19 5V14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                    </div>
+                    <div class="album-info">
+                        <h2>${album.albumTitle}</h2>
+                        <p>${album.albumDesc}</p>
+                        <div class="album-gear-summary">
+                            <div><span>Cameras:</span> ${uniqueCameras}</div>
+                            <div style="margin-top: 4px;"><span>Lenses:</span> ${uniqueLenses}</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openAlbum(albumIndex) {
+            const album = portfolioData[albumIndex];
+            const listContainer = document.getElementById('photo-list');
+            listContainer.innerHTML = ''; 
+
+            album.photos.forEach((photo, photoIndex) => {
+                const meta = photo.metadata;
+                const ids = photo.identifications;
+                const metaString = `${meta.camera} • ${meta.lens} • ${meta.aperture}`;
+
+                // Generate Badges HTML
+                let badgesHTML = '';
+                if(ids.location) badgesHTML += `<span class="tag-badge tag-location">📍 ${ids.location}</span>`;
+                
+                if(ids.plants) ids.plants.forEach(p => badgesHTML += `<span class="tag-badge tag-bio">🌿 ${p}</span>`);
+                if(ids.insects) ids.insects.forEach(i => badgesHTML += `<span class="tag-badge tag-bio">🦋 ${i}</span>`);
+                if(ids.animals) ids.animals.forEach(a => badgesHTML += `<span class="tag-badge tag-bio">🦊 ${a}</span>`);
+                if(ids.space_objects) ids.space_objects.forEach(s => badgesHTML += `<span class="tag-badge tag-space">☄️ ${s}</span>`);
+
+                const item = document.createElement('div');
+                item.className = 'photo-item';
+                item.onclick = () => openFullscreen(albumIndex, photoIndex);
+
+                item.innerHTML = `
+                    <img src="${photo.url}" class="photo-preview" alt="${photo.title}">
+                    <div class="photo-title">${photo.title}</div>
+                    <div class="photo-desc">${photo.description}</div>
+                    <div class="item-tags">${badgesHTML}</div>
+                    <div class="photo-meta">
+                        <span class="photo-author">${photo.photographer}</span>
+                        <span>|</span>
+                        <span>${metaString}</span>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+
+            const modal = document.getElementById('album-modal');
+            modal.style.display = 'block';
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+
+        function closeAlbum() {
+            const modal = document.getElementById('album-modal');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function openFullscreen(albumIndex, photoIndex) {
+            const photo = portfolioData[albumIndex].photos[photoIndex];
+            const meta = photo.metadata;
+            const ids = photo.identifications;
+            
+            // Set Image & Basic Info
+            document.getElementById('fs-image').src = photo.url;
+            document.getElementById('fs-title').innerText = photo.title;
+            document.getElementById('fs-desc').innerText = photo.description;
+            document.getElementById('fs-author').innerText = photo.photographer;
+            document.getElementById('fs-link').href = photo.url;
+
+            // Build Meta Grid
+            document.getElementById('fs-meta-grid').innerHTML = `
+                <div><div class="meta-label">Camera</div><div class="meta-value">${meta.camera}</div></div>
+                <div><div class="meta-label">Lens</div><div class="meta-value">${meta.lens}</div></div>
+                <div><div class="meta-label">Aperture</div><div class="meta-value">${meta.aperture}</div></div>
+                <div><div class="meta-label">Settings</div><div class="meta-value">${meta.shutter} at ISO ${meta.iso}</div></div>
+                ${ids.location ? `<div style="grid-column: 1/-1; margin-top: 5px;"><div class="meta-label">Location</div><div class="meta-value">📍 ${ids.location}</div></div>` : ''}
+            `;
+
+            // Handle Identifications & Wikipedia Fetches
+            const wikiContainer = document.getElementById('wiki-container');
+            const idSection = document.getElementById('identifications-section');
+            wikiContainer.innerHTML = ''; // Clear old data
+            
+            // Collect all entities for Wikipedia lookup
+            const bioEntities = [
+                ...(ids.plants || []).map(name => ({name, type: 'Plant'})),
+                ...(ids.insects || []).map(name => ({name, type: 'Insect'})),
+                ...(ids.animals || []).map(name => ({name, type: 'Animal'})),
+                ...(ids.space_objects || []).map(name => ({name, type: 'Space Object'}))
+            ];
+
+            if (bioEntities.length > 0) {
+                idSection.style.display = 'block';
+                bioEntities.forEach(entity => {
+                    fetchWikiData(entity.name, entity.type, wikiContainer);
+                });
+            } else {
+                idSection.style.display = 'none';
+            }
+
+            const modal = document.getElementById('fullscreen-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+
+        // Wikipedia API Fetch Logic
+        async function fetchWikiData(keyword, type, container) {
+            const cardId = 'wiki-' + Math.random().toString(36).substr(2, 9);
+            const loadingHtml = `
+                <div class="wiki-card" id="${cardId}">
+                    <div class="wiki-title">${keyword} <span class="wiki-badge">${type}</span></div>
+                    <div class="wiki-extract" style="opacity: 0.5;">Loading Wikipedia data...</div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', loadingHtml);
+
+            try {
+                const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(keyword)}`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                const cardElement = document.getElementById(cardId);
+                
+                if (data.type === 'standard' && data.extract) {
+                    const wikiUrl = data.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${encodeURIComponent(keyword)}`;
+                    
+                    cardElement.innerHTML = `
+                        <div class="wiki-title">${data.title || keyword} <span class="wiki-badge">${type}</span></div>
+                        <div class="wiki-extract" title="${data.extract}">${data.extract}</div>
+                        <a href="${wikiUrl}" target="_blank" class="wiki-link">
+                            Read more on Wikipedia ↗
+                        </a>
+                    `;
+                } else {
+                    cardElement.innerHTML = `
+                        <div class="wiki-title">${keyword} <span class="wiki-badge">${type}</span></div>
+                        <div class="wiki-extract">No detailed Wikipedia summary found for this classification.</div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById(cardId).innerHTML = `
+                    <div class="wiki-title">${keyword} <span class="wiki-badge">${type}</span></div>
+                    <div class="wiki-extract" style="color: #ff453a;">Failed to load data.</div>
+                `;
+            }
+        }
+
+        function closeFullscreen() {
+            const modal = document.getElementById('fullscreen-modal');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        window.onload = initAlbums;
+    </script>
+</body>
 </html>
